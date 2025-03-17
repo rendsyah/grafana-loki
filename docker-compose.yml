@@ -1,8 +1,3 @@
-version: "3"
-
-networks:
-  loki:
-
 services:
   loki:
     image: grafana/loki:latest
@@ -10,7 +5,7 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - loki
+      - shared-networks
 
   promtail:
     image: grafana/promtail:latest
@@ -18,11 +13,17 @@ services:
       - /var/log:/var/log
     command: -config.file=/etc/promtail/config.yml
     networks:
-      - loki
+      - shared-networks
 
   grafana:
     image: grafana/grafana:master
     ports:
       - "3000:3000"
     networks:
-      - loki
+      - shared-networks
+
+networks:
+  shared-networks:
+    name: shared-networks
+    driver: bridge
+    external: true
